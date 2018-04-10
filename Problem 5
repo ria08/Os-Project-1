@@ -1,0 +1,144 @@
+#include<stdio.h>
+int main()
+{
+int ts,std_pid[10],std_need[10],std_swt[10],std_stat[10],i,j,std_sn,std_sn1,fac_id[10],fac_need[10],fac_fwt[10],fac_ftat[10],fac_fn,fac_fn1;
+int sbt[10],sflag[10],sttat=0,stwt=0,fbt[10],fflag[10],fttat=0,ftwt=0;
+float std_awt,std_satat,fac_awt,fac_atat,tt;
+printf("\t\t \n");
+printf("Enter the number of student queries ");
+scanf("%d",&std_sn);
+std_sn1=std_sn;
+for(i=1;i<=std_sn;i++)
+{
+ printf("\n Enter the %d student query ID ",i);
+ scanf("%d",&std_pid[i]);
+ printf("\n Enter the Burst Time for the query ");
+ scanf("%d",&sbt[i]);
+ std_need[i]=sbt[i];
+}
+printf("\n Enter the number of faculty queries ");
+scanf("%d",&fac_fn);
+fac_fn1=fac_fn;
+for(i=1;i<=fac_fn;i++)
+{
+ printf("\n Enter the %d faculty query ID ",i);
+ scanf("%d",&fac_id[i]);
+ printf("\n Enter the Burst Time for the query ");
+ scanf("%d",&fbt[i]);
+ fac_need[i]=fbt[i];
+}
+printf("\n Enter the Timeslice ");
+scanf("%d",&ts);
+for(i=1;i<=std_sn;i++)
+{
+ sflag[i]=1;
+ std_swt[i]=0;
+}
+while(std_sn!=0)
+{
+ for(i=1;i<=std_sn;i++)
+ {
+ if(std_need[i]>=ts)
+ {
+ for(j=1;j<=std_sn;j++)
+ {
+ if((i!=j)&&(sflag[i]==1)&&(std_need[j]!=0))
+ std_swt[j]+=ts;
+ }
+ 
+ std_need[i]-=ts;
+ if(std_need[i]==0)
+ {
+sflag[i]=0;
+std_sn--;
+ }
+ }
+ else
+ {
+ for(j=1;j<=std_sn;j++)
+ {
+ if((i!=j)&&(sflag[i]==1)&&(std_need[j]!=0))
+ std_swt[j]+=std_need[i];
+ }
+ std_need[i]=0;
+ std_sn--;
+ sflag[i]=0;
+ }
+}
+}
+for(i=1;i<=std_sn1;i++)
+{
+ std_stat[i]=std_swt[i]+sbt[i];
+ stwt=stwt+std_swt[i];
+ sttat=sttat+std_stat[i];
+}
+std_satat=sttat/std_sn1;
+printf("-----------------------------------------STUDENT QUERIES --------------------------------------------------- \n");
+printf("\n\n query \t query ID \t BurstTime \t Waiting Time \t TurnaroundTime \n ");
+for(i=1;i<=std_sn1;i++)
+{
+ printf("\n %5d \t %5d \t\t %5d \t\t %5d \t\t %5d \n", i,std_pid[i],sbt[i],std_swt[i],std_stat[i]);
+}
+printf(" \n ");
+
+for(i=1;i<=fac_fn;i++)
+{
+ fflag[i]=1;
+ fac_fwt[i]=0;
+}
+while(fac_fn!=0)
+{
+ for(i=1;i<=fac_fn;i++)
+ {
+ if(fac_need[i]>=ts)
+ {
+ for(j=1;j<=fac_fn;j++)
+ {
+ if((i!=j)&&(fflag[i]==1)&&(fac_need[j]!=0))
+ fac_fwt[j]+=ts;
+ }
+ 
+ fac_need[i]-=ts;
+ if(fac_need[i]==0)
+ {
+fflag[i]=0;
+fac_fn--;
+ }
+ }
+ else
+ {
+ for(j=1;j<=fac_fn;j++)
+ {
+ if((i!=j)&&(fflag[i]==1)&&(fac_need[j]!=0))
+ fac_fwt[j]+=fac_need[i];
+ }
+ fac_need[i]=0;
+ fac_fn--;
+ fflag[i]=0;
+ }
+}
+}
+for(i=1;i<=fac_fn1;i++)
+{
+ fac_ftat[i]=fac_fwt[i]+fbt[i];
+ ftwt=ftwt+fac_fwt[i];
+ fttat=fttat+fac_ftat[i];
+}
+for(i=1;i<=fac_fn1;i++)
+{
+	tt=tt+fac_ftat[i];
+}
+for(i=1;i<=std_sn1;i++)
+{
+	tt=tt+std_stat[i];
+}
+fac_atat=fttat/fac_fn1;
+printf("-----------------------------------------FACULTY QUERIES --------------------------------------------------- \n");
+printf("\n\n query \t query ID \t BurstTime \t Waiting Time \t TurnaroundTime \n ");
+for(i=1;i<=std_sn1;i++)
+{
+ printf("\n %5d \t %5d \t\t %5d \t\t %5d \t\t %5d \n", i,fac_id[i],fbt[i],fac_fwt[i],fac_ftat[i]);
+}
+printf("\n The amount of time spent on queries %f",tt);
+printf("\n The average Turn around %f",std_satat+fac_atat);
+} 
